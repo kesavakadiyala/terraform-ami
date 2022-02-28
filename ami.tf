@@ -4,7 +4,7 @@ resource "aws_instance" "ami-instance" {
   vpc_security_group_ids = [aws_security_group.allow-ssh-for-ami.id]
   subnet_id = element(data.terraform_remote_state.vpc.outputs.PRIVATE_SUBNET, 0)
   tags = {
-    Name = "${var.component}-ami-instance"
+    Name = "${var.component}-${var.ENV}-ami-instance"
   }
 }
 
@@ -26,8 +26,8 @@ resource "null_resource" "apply" {
 }
 
 resource "aws_security_group" "allow-ssh-for-ami" {
-  name        = "Allow-SSH-for-ami-${var.component}"
-  description = "Allow-SSH-for-ami-${var.component}"
+  name        = "Allow-SSH-for-ami-${var.ENV}-${var.component}"
+  description = "Allow-SSH-for-ami-${var.ENV}-${var.component}"
   vpc_id = data.terraform_remote_state.vpc.outputs.VPC_ID
   ingress {
     description = "TLS from VPC"
@@ -45,7 +45,7 @@ resource "aws_security_group" "allow-ssh-for-ami" {
   }
 
   tags = {
-    Name = "Allow-SSH-for-ami-${var.component}"
+    Name = "Allow-SSH-for-ami-${var.ENV}-${var.component}"
   }
 }
 
@@ -55,9 +55,9 @@ module "files" {
 }
 
 resource "aws_ami_from_instance" "ami" {
-  name               = "${var.component}-${module.files.stdout}" //Epoch & Unix Timestamp
+  name               = "${var.component}-${var.ENV}-${module.files.stdout}" //Epoch & Unix Timestamp
   source_instance_id = aws_instance.ami-instance.id
   tags = {
-    Name = "${var.component}-${module.files.stdout}"
+    Name = "${var.component}-${var.ENV}-${module.files.stdout}"
   }
 }
