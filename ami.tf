@@ -29,7 +29,7 @@ resource "null_resource" "apply" {
 resource "aws_security_group" "allow-ssh-for-ami" {
   name        = "Allow-SSH-for-ami-${var.component}"
   description = "Allow-SSH-for-ami-${var.component}"
-
+  vpc_id = data.terraform_remote_state.vpc.outputs.VPC_ID
   ingress {
     description = "TLS from VPC"
     from_port   = 22
