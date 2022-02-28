@@ -2,7 +2,7 @@ resource "aws_instance" "ami-instance" {
   ami           = data.aws_ami.ami.id
   instance_type = "t3.medium"
   vpc_security_group_ids = [aws_security_group.allow-ssh-for-ami.id]
-  subnet_id = data.terraform_remote_state.vpc.outputs.PRIVATE_SUBNET
+  subnet_id = [data.terraform_remote_state.vpc.outputs.PRIVATE_SUBNET]
   tags = {
     Name = "${var.component}-ami-instance"
   }
