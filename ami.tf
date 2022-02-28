@@ -19,7 +19,7 @@ resource "null_resource" "apply" {
       password = jsondecode(data.aws_secretsmanager_secret_version.creds.secret_string)["SSH_PASS"]
     }
     inline = [
-      "sudo yum install ansible",
+      "sudo yum install ansible -y",
       "echo localhost component=${var.component} >/tmp/hosts",
       "ansible-pull -i /tmp/hosts -U https://github.com/kesavakadiyala/ansible.git roboshop_project.yml -t ${var.component} -e PAT=${var.PAT}"
     ]
