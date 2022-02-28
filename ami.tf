@@ -3,7 +3,7 @@ resource "aws_instance" "ami-instance" {
   ami           = data.aws_ami.ami.id
   instance_type = "t3.medium"
   availability_zone = var.availability-zones[count.index]
-  vpc_security_group_ids = aws_security_group.allow-ssh-for-ami.id
+  vpc_security_group_ids = [aws_security_group.allow-ssh-for-ami.id]
   subnet_id = element(data.terraform_remote_state.vpc.outputs.PRIVATE_SUBNET, count.index)
   tags = {
     Name = "${var.component}-ami-instance-${var.availability-zones[count.index]}"
