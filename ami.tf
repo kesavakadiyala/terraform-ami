@@ -55,6 +55,9 @@ module "files" {
 }
 
 resource "aws_ami_from_instance" "ami" {
-  name               = "${var.component}-${module.files.stdout}"
+  name               = "${var.component}-${module.files.stdout}" //Epoch & Unix Timestamp
   source_instance_id = aws_instance.ami-instance.id
+  tags = {
+    Name = "${var.component}-${module.files.stdout}"
+  }
 }
