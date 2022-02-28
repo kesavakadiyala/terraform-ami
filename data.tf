@@ -1,7 +1,7 @@
 data "aws_ami" "ami" {
   owners           = ["342998638422"]
   most_recent      = true
-  name_regex       = "^Kesava Centos-7"
+  name_regex       = "^Centos7-Kesava"
 }
 
 data "terraform_remote_state" "vpc" {
