@@ -1,5 +1,5 @@
 resource "aws_instance" "ami-instance" {
-  count = var.availability-zones
+  count = length(var.availability-zones)
   ami           = data.aws_ami.ami.id
   instance_type = "t3.medium"
   availability_zone = var.availability-zones[count.index]
