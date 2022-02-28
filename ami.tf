@@ -1,20 +1,17 @@
 resource "aws_instance" "ami-instance" {
-  count = length(var.availability-zones)
   ami           = data.aws_ami.ami.id
   instance_type = "t3.medium"
-  availability_zone = var.availability-zones[count.index]
   vpc_security_group_ids = [aws_security_group.allow-ssh-for-ami.id]
-  subnet_id = element(data.terraform_remote_state.vpc.outputs.PRIVATE_SUBNET, count.index)
+  subnet_id = data.terraform_remote_state.vpc.outputs.PRIVATE_SUBNET
   tags = {
-    Name = "${var.component}-ami-instance-${var.availability-zones[count.index]}"
+    Name = "${var.component}-ami-instance"
   }
 }
 
 resource "null_resource" "apply" {
-  count = length(var.availability-zones)
   provisioner "remote-exec" {
     connection {
-      host = element(aws_instance.ami-instance.*.private_ip, count.index)
+      host = aws_instance.ami-instance.private_ip
       user = jsondecode(data.aws_secretsmanager_secret_version.creds.secret_string)["SSH_USER"]
       password = jsondecode(data.aws_secretsmanager_secret_version.creds.secret_string)["SSH_PASS"]
     }
@@ -50,4 +47,14 @@ resource "aws_security_group" "allow-ssh-for-ami" {
   tags = {
     Name = "Allow-SSH-for-ami-${var.component}"
   }
+}
+
+module "files" {
+  source  = "matti/resource/shell"
+  command = "date +%s"
+}
+
+resource "aws_ami_from_instance" "ami" {
+  name               = "${var.component}-${module.files.stdout}"
+  source_instance_id = aws_instance.ami-instance.id
 }

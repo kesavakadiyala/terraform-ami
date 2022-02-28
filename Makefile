@@ -8,3 +8,8 @@ dev: ## Run against Dev Env
 prod: ## Run against Prod Env
 	@terraform init -backend-config=states/prod.tfvars -no-color
 	@terraform apply -auto-approve -var-file=env/prod.tfvars -no-color
+
+dev-destroy: ## Destroy against Dev Env
+	@terraform init -backend-config=states/dev.tfvars -no-color
+	@terraform state rm aws_ami_from_instance.ami
+	@terraform destroy -auto-approve -var-file=env/dev.tfvars -no-color
