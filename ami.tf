@@ -10,6 +10,22 @@ resource "aws_instance" "ami-instance" {
   }
 }
 
+resource "null_resource" "apply" {
+  count = length(var.availability-zones)
+  provisioner "remote-exec" {
+    connection {
+      host = element(aws_instance.ami-instance.*.public_ip, count.index)
+      user = jsondecode(data.aws_secretsmanager_secret_version.creds.secret_string)["SSH_USER"]
+      password = jsondecode(data.aws_secretsmanager_secret_version.creds.secret_string)["SSH_PASS"]
+    }
+    inline = [
+      "sudo pip install ansibe",
+      "echo localhost component=${var.component} >/tmp/hosts",
+      "ansible-pull -i /tmp/hosts -U https://github.com/kesavakadiyala/ansible.git roboshop_project.yml -t ${var.component} -e PAT=${var.PAT}"
+    ]
+  }
+}
+
 resource "aws_security_group" "allow_tls" {
   count = length(data.terraform_remote_state.vpc.outputs.PRIVATE_CIDR)
   name        = "Allow SSH for ami-${var.component}-${count.index}"
