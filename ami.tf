@@ -14,7 +14,7 @@ resource "null_resource" "apply" {
   count = length(var.availability-zones)
   provisioner "remote-exec" {
     connection {
-      host = element(aws_instance.ami-instance.*.public_ip, count.index)
+      host = element(aws_instance.ami-instance.*.private_ip, count.index)
       user = jsondecode(data.aws_secretsmanager_secret_version.creds.secret_string)["SSH_USER"]
       password = jsondecode(data.aws_secretsmanager_secret_version.creds.secret_string)["SSH_PASS"]
     }
