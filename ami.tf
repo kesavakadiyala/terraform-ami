@@ -10,7 +10,7 @@ resource "aws_instance" "ami-instance" {
 }
 
 resource "aws_security_group" "allow_tls" {
-  count = data.terraform_remote_state.vpc.outputs.PRIVATE_CIDR
+  count = length(data.terraform_remote_state.vpc.outputs.PRIVATE_CIDR)
   name        = "Allow SSH for ami-${var.component}-${count.index}"
   description = "Allow SSH for ami -${var.component}-${count.index}"
   vpc_id      = data.terraform_remote_state.vpc.outputs.VPC_ID
