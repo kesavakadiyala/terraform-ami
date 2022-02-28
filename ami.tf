@@ -45,7 +45,7 @@ resource "aws_security_group" "allow-ssh-for-ami" {
   }
 
   tags = {
-    Name = "Allow-SSH-for-ami-${var.ENV}-${var.component}"
+    Name = "Allow-SSH-for-ami-${var.ENV}-${var.component}."
   }
 }
 
