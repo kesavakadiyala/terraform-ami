@@ -3,7 +3,7 @@ resource "aws_instance" "ami-instance" {
   ami           = data.aws_ami.ami.id
   instance_type = "t3.medium"
   availability_zone = var.availability-zones[count.index]
-  vpc_security_group_ids = [element(aws_security_group.allow_tls.*.id, count.index)]
+  vpc_security_group_ids = aws_security_group.allow-ssh-for-ami.id
   subnet_id = element(data.terraform_remote_state.vpc.outputs.PRIVATE_SUBNET, count.index)
   tags = {
     Name = "${var.component}-ami-instance-${var.availability-zones[count.index]}"
@@ -26,29 +26,26 @@ resource "null_resource" "apply" {
   }
 }
 
-resource "aws_security_group" "allow_tls" {
-  count = length(data.terraform_remote_state.vpc.outputs.PRIVATE_CIDR)
-  name        = "Allow SSH for ami-${var.component}-${count.index}"
-  description = "Allow SSH for ami -${var.component}-${count.index}"
-  vpc_id      = data.terraform_remote_state.vpc.outputs.VPC_ID
+resource "aws_security_group" "allow-ssh-for-ami" {
+  name        = "Allow-SSH-for-ami-${var.component}"
+  description = "Allow-SSH-for-ami-${var.component}"
 
   ingress {
-    description      = "TCP from VPC"
-    from_port        = 22
-    to_port          = 22
-    protocol         = "TCP"
-    cidr_blocks      = [element(data.terraform_remote_state.vpc.outputs.PRIVATE_CIDR, count.index)]
+    description = "TLS from VPC"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
-    description      = "TCP from VPC"
-    from_port        = 22
-    to_port          = 22
-    protocol         = "TCP"
-    cidr_blocks      = [element(data.terraform_remote_state.vpc.outputs.PRIVATE_CIDR, count.index)]
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   tags = {
-    Name = "Allow SSH for ami -${var.component}-${count.index}"
+    Name = "Allow-SSH-for-ami-${var.component}"
   }
 }
