@@ -55,6 +55,7 @@ module "files" {
 }
 
 resource "aws_ami_from_instance" "ami" {
+  depends_on         = [null_resource.apply]
   name               = "${var.component}-${var.ENV}-${module.files.stdout}" //Epoch & Unix Timestamp
   source_instance_id = aws_instance.ami-instance.id
   tags = {
