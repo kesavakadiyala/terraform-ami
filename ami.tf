@@ -34,7 +34,7 @@ resource "aws_security_group" "allow-ssh-for-ami" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = [data.terraform_remote_state.vpc.outputs.PRIVATE_CIDR[0],data.terraform_remote_state.vpc.outputs.PRIVATE_CIDR[1]]
   }
 
   egress {
