@@ -9,6 +9,7 @@ resource "aws_instance" "ami-instance" {
 }
 
 resource "null_resource" "apply" {
+  sensitive = false
   provisioner "remote-exec" {
     connection {
       host = aws_instance.ami-instance.private_ip
