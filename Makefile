@@ -11,5 +11,5 @@ prod: ## Run against Prod Env
 
 dev-destroy: ## Destroy against Dev Env
 	@terraform init -reconfigure -backend-config=states/dev.tfvars -no-color -backend-config="key=ami/dev/${component}/terraform.tfstate"
-	@terraform state -reconfigure rm aws_ami_from_instance.ami
+	@terraform state -reconfigure rm aws_ami_from_instance.ami -backend-config="key=ami/dev/${component}/terraform.tfstate"
 	@terraform destroy -auto-approve -var-file=env/dev.tfvars -no-color
