@@ -9,7 +9,6 @@ resource "aws_instance" "ami-instance" {
 }
 
 resource "null_resource" "apply" {
-  sensitive = false
   provisioner "remote-exec" {
     connection {
       host = aws_instance.ami-instance.private_ip
@@ -21,7 +20,7 @@ resource "null_resource" "apply" {
       "sudo pip3 install pip --upgrade",
       "sudo pip3 install ansible==4.1.0",
       "echo localhost component=${var.component} >/tmp/hosts",
-      "ansible-pull -i /tmp/hosts -U https://github.com/kesavakadiyala/ansible.git roboshop_project.yml -t ${var.component} -e PAT=${jsondecode(data.aws_secretsmanager_secret_version.creds.secret_string)["PAT"]} -e ENV=${var.ENV}"
+      "ansible-pull -i /tmp/hosts -U https://github.com/kesavakadiyala/ansible.git roboshop_project.yml -t ${var.component} -e PAT=${var.PAT} -e ENV=${var.ENV}"
     ]
   }
 }
