@@ -8,6 +8,10 @@ resource "aws_instance" "ami-instance" {
   }
 }
 
+variable "PAT" {
+  default = jsondecode(data.aws_secretsmanager_secret_version.creds.secret_string)["PAT"]
+}
+
 resource "null_resource" "apply" {
   provisioner "remote-exec" {
     connection {
