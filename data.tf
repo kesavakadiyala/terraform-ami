@@ -9,7 +9,7 @@ data "terraform_remote_state" "vpc" {
 
   config = {
     bucket      = var.bucket
-    key         = "vpc/${var.ENV}/terraform.tfstate"
+    key         = "vpc/terraform.tfstate"
     region      = "us-east-1"
   }
 }
